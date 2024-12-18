@@ -170,8 +170,6 @@ export class Chat {
    */
   public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
     const mergedOptions = { ...this.options, ...options };
-    console.log("mergedOptions", mergedOptions);
-    console.log("this.history", this.history);
     return this.gemini.ask(message, {
       history: this.history,
       ...mergedOptions,
@@ -375,11 +373,7 @@ export class Gemini {
       systemInstruction,
     });
 
-    console.log("chat", chat);
-    console.log("parts", parts);
-
     const result = await chat.sendMessage(parts);
-
     return result;
   }
 
@@ -405,17 +399,8 @@ export class Gemini {
       systemInstruction,
     });
 
-    console.log("chat", chat);
-    console.log("parts", parts);
-
-    try {
-      const result = await chat.sendMessageStream(parts);
-      return result;
-    }
-    catch (error) {
-      console.log("error", error);
-      throw error;
-    }
+    const result = await chat.sendMessageStream(parts);
+    return result;
   }
 
   /**
