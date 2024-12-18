@@ -54,7 +54,7 @@ async function generateText() {
 generateText();
 ```
 
-### Streaming Text Generation (askStream)
+### Streaming Text Generation
 
 ```typescript
 import Gemini from "gemini-ai-sdk";
@@ -62,7 +62,7 @@ import Gemini from "gemini-ai-sdk";
 const gemini = new Gemini("YOUR_API_KEY");
 
 async function streamText() {
-  const result = await gemini.askStream("Tell me a joke.");
+  const result = await gemini.ask("Tell me a joke.", { stream: true });
   for await (const chunk of result.stream) {
     console.log(chunk.text());
   }
@@ -105,7 +105,7 @@ async function runChat() {
   });
 
   // Get a streaming response from a user message
-  const result2 = await chat.askStream("Tell me a story about a dog.");
+  const result2 = await chat.ask("Tell me a story about a dog.", { stream: true });
   console.log("Model (streaming):");
   for await (const chunk of result2.stream) {
     process.stdout.write(chunk.text());
@@ -161,27 +161,18 @@ uploadImageAndAsk();
     - `apiVersion`: The API version to use (default: `"v1beta"`).
     - `fetch`: A custom fetch implementation (optional).
 
-- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateResult>`**
 
   - `message`: The prompt string or an array of `Part` objects (for multi-modal input).
   - `options`: Optional parameters.
-
+    - `stream`: Whether to stream the response (default: `false`).
     - `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
     - `safetySettings`: Safety settings to filter responses.
     - `systemInstruction`: System instructions to guide the model's behavior.
     - `history`: An array of previous chat turns.
 
-  - Returns a `Promise` that resolves to a `GenerateContentResult` object.
-
-- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
-
-  - `message`: The prompt string or an array of `Part` objects.
-  - `options`: Same as `ask` method.
-  - Returns a `Promise` that resolves to a `GenerateContentStreamResult` object, which contains an async generator (`stream`) for iterating over the chunks and a `response` promise for getting the aggregated response when the stream is done.
-
-- **`createChat(options?: Partial<AskOptions>): Chat`**
-  - `options`: Optional parameters for the chat (history, safety settings, etc.).
-  - Returns a `Chat` object.
+  - Returns a `Promise` that resolves to a `GenerateContentResult` object (if not streaming), 
+    or a `GenerateContentStreamResult` object (if streaming).
 
 ### `Chat` Class
 
@@ -194,12 +185,9 @@ uploadImageAndAsk();
 
   - `message`: The `Content` object representing the message to append to the history.
 
-- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateResult>`**
 
   - Same as the `Gemini.ask` method, but uses the chat's history.
-
-- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
-  - Same as the `Gemini.askStream` method, but uses the chat's history.
 
 ### Types
 

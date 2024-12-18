@@ -125,15 +125,21 @@ export interface GeminiOptions {
 }
 
 /**
- * Options for the `ask` and `askStream` methods.
+ * Options for the `ask` method, as well as the `Chat` class.
  */
 export interface AskOptions {
+  stream?: boolean;
   model?: string;
   history?: Content[];
   generationConfig?: GenerationConfig;
   safetySettings?: SafetySetting[];
   systemInstruction?: Content;
 }
+
+/**
+ * Types for various methods.
+ */
+export type GenerateResult = GenerateContentResult | GenerateContentStreamResult;
 
 /**
  * Represents a chat session with Gemini.
@@ -166,28 +172,12 @@ export class Chat {
    * Sends a message to Gemini and returns the response.
    * @param message - The message to send.
    * @param options - Optional parameters for the request.
-   * @returns The response from Gemini.
+   * @returns The response from Gemini. If options.stream = false, returns a single object.
+   * Otherwise, returns an AsyncGenerator of results.
    */
-  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
+  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateResult> {
     const mergedOptions = { ...this.options, ...options };
     return this.gemini.ask(message, {
-      history: this.history,
-      ...mergedOptions,
-    });
-  }
-
-  /**
-   * Sends a message to Gemini and returns a stream of responses.
-   * @param message - The message to send.
-   * @param options - Optional parameters for the request.
-   * @returns A stream of responses from Gemini.
-   */
-  public async askStream(
-    message: string | Part[],
-    options: Partial<AskOptions> = {},
-  ): Promise<GenerateContentStreamResult> {
-    const mergedOptions = { ...this.options, ...options };
-    return this.gemini.askStream(message, {
       history: this.history,
       ...mergedOptions,
     });
@@ -358,9 +348,10 @@ export class Gemini {
    * Sends a request to the Gemini API and returns the response.
    * @param message - The message to send.
    * @param options - Optional parameters for the request.
-   * @returns The response from the Gemini API.
+   * @returns The response from the Gemini API. If options.stream = false, returns a single object.
+   * Otherwise, returns an AsyncGenerator of results.
    */
-  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
+  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateResult> {
     const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
     const parts = typeof message === "string" ? [{ text: message }] : message;
 
@@ -373,34 +364,12 @@ export class Gemini {
       systemInstruction,
     });
 
-    const result = await chat.sendMessage(parts);
-    return result;
-  }
-
-  /**
-   * Sends a request to the Gemini API and returns a stream of responses.
-   * @param message - The message to send.
-   * @param options - Optional parameters for the request.
-   * @returns A stream of responses from the Gemini API.
-   */
-  public async askStream(
-    message: string | Part[],
-    options: Partial<AskOptions> = {},
-  ): Promise<GenerateContentStreamResult> {
-    const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
-    const parts = typeof message === "string" ? [{ text: message }] : message;
-
-    const { generationConfig, safetySettings, systemInstruction, history } = options;
-
-    const chat = model.startChat({
-      history: history || [],
-      generationConfig,
-      safetySettings,
-      systemInstruction,
-    });
-
-    const result = await chat.sendMessageStream(parts);
-    return result;
+    if (options.stream) {
+      return chat.sendMessageStream(parts);
+    }
+    else {
+      return chat.sendMessage(parts);
+    }
   }
 
   /**
