@@ -218,6 +218,20 @@ The package handles errors gracefully and throws appropriate exceptions when nec
 - File upload errors
 - Safety violations (if configured)
 
+## Support
+
+The official `@google/generative-ai` package, which this SDK is based on, officially supports Node.js 18.x and above.
+However, the package requires the Fetch API to be available, so it may not work in some environments. If you encounter
+issues, please try using the polyfill `undici`. Example:
+
+```typescript
+import { fetch, Headers, Response, Request } from "undici";
+global.fetch = fetch;
+global.Headers = Headers;
+global.Response = Response;
+global.Request = Request;
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to open issues or pull requests on the GitHub repository.
