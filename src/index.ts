@@ -364,7 +364,7 @@ export class Gemini {
    */
   public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
     const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
-    const parts = typeof message === "string" ? [{ text: message }] : message;
+    const parts = typeof message === "string" ? [{ role: "user", text: message }] : message;
 
     const { generationConfig, safetySettings, systemInstruction, history } = options;
 
@@ -394,7 +394,7 @@ export class Gemini {
     options: Partial<AskOptions> = {},
   ): Promise<GenerateContentStreamResult> {
     const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
-    const parts = typeof message === "string" ? [{ text: message }] : message;
+    const parts = typeof message === "string" ? [{ role: "user", text: message }] : message;
 
     const { generationConfig, safetySettings, systemInstruction, history } = options;
 
@@ -408,9 +408,14 @@ export class Gemini {
     console.log("chat", chat);
     console.log("parts", parts);
 
-    const result = await chat.sendMessageStream(parts);
-
-    return result;
+    try {
+      const result = await chat.sendMessageStream(parts);
+      return result;
+    }
+    catch (error) {
+      console.log("error", error);
+      throw error;
+    }
   }
 
   /**
