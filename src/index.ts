@@ -415,3 +415,7 @@ export class Gemini {
 }
 
 export default Gemini;
+
+// export constants
+import { safetyDisabledSettings } from "./constants";
+export { safetyDisabledSettings };

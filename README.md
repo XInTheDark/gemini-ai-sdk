@@ -16,7 +16,7 @@ This package provides a TypeScript wrapper around the official `@google/generati
 ## Installation
 
 ```bash
-npm install your-package-name
+npm install gemini-ai-sdk
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ npm install your-package-name
 ### Initialization
 
 ```typescript
-import Gemini, { GeminiOptions, FileUpload } from "your-package-name";
+import Gemini, { GeminiOptions, FileUpload } from "gemini-ai-sdk";
 
 // Initialize Gemini with your API key
 const gemini = new Gemini("YOUR_API_KEY");
@@ -42,7 +42,7 @@ const geminiWithOptions = new Gemini("YOUR_API_KEY", options);
 ### Text Generation (ask)
 
 ```typescript
-import Gemini from "your-package-name";
+import Gemini from "gemini-ai-sdk";
 
 const gemini = new Gemini("YOUR_API_KEY");
 
@@ -57,7 +57,7 @@ generateText();
 ### Streaming Text Generation (askStream)
 
 ```typescript
-import Gemini from "your-package-name";
+import Gemini from "gemini-ai-sdk";
 
 const gemini = new Gemini("YOUR_API_KEY");
 
@@ -74,7 +74,7 @@ streamText();
 ### Chat Interaction
 
 ```typescript
-import Gemini, { Content, HarmBlockThreshold, HarmCategory } from "your-package-name";
+import Gemini, { Content, HarmBlockThreshold, HarmCategory } from "gemini-ai-sdk";
 
 const gemini = new Gemini("YOUR_API_KEY");
 
@@ -135,7 +135,7 @@ runChat();
 ### File Uploads
 
 ```typescript
-import Gemini, { isFileUpload } from "your-package-name";
+import Gemini, { isFileUpload } from "gemini-ai-sdk";
 import * as fs from "fs";
 
 const gemini = new Gemini("YOUR_API_KEY");
@@ -214,6 +214,16 @@ uploadImageAndAsk();
 - **`AskOptions`:** `{ generationConfig?: GenerationConfig, safetySettings?: SafetySetting[], systemInstruction?: Content }`
 - **`Content`:** `{ role: string, parts: Part[] }`
 - **`Part`:** `TextPart | InlineDataPart | FileDataPart`
+
+### Constants
+
+- `safetyDisabledSettings`: The most permissive safety settings.
+
+Example:
+    
+```typescript
+import { safetyDisabledSettings } from "gemini-ai-sdk";
+```
 
 ## Error Handling
 
