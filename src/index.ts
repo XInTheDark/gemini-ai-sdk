@@ -292,7 +292,7 @@ export class Gemini {
    * @param messages - The messages or files to convert.
    * @returns An array of Gemini API parts.
    */
-  private async messageToParts(messages: (string | Uint8Array | ArrayBuffer | FileUpload)[]): Promise<Part[]> {
+  public async messageToParts(messages: (string | Uint8Array | ArrayBuffer | FileUpload)[]): Promise<Part[]> {
     const parts: Part[] = [];
     let totalBytes = 0;
 
