@@ -1,0 +1,40 @@
+{
+  "name": "gemini-ai-sdk",
+  "version": "1.0.0-alpha.1",
+  "author": "jmuzhen",
+  "description": "The simpler JavaScript Gemini SDK - optimised for raycast-g4f",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XInTheDark/gemini-ai-sdk.git"
+  },
+  "homepage": "https://github.com/XInTheDark/gemini-ai-sdk",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "check": "bunx @biomejs/biome check --apply .",
+    "fix-lint": "npx prettier . --write --list-different"
+  },
+  "keywords": [
+    "google",
+    "ai",
+    "gemini"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "file-type": "^19.0.0",
+    "mime-lite": "^1.0.3"
+  },
+  "main": "dist/index.mjs",
+  "typings": "dist/index.d.mts",
+  "bugs": {
+    "url": "https://github.com/jmuzhen/gemini-ai-v2/issues"
+  }
+}
