@@ -208,11 +208,13 @@ uploadImageAndAsk();
 ### Constants
 
 - `safetyDisabledSettings`: The most permissive safety settings.
+- `defaultTools`: Some default tools to get you started.
 
 Example:
 
 ```typescript
-import { safetyDisabledSettings } from "gemini-ai-sdk";
+import { constants } from "gemini-ai-sdk";
+console.log(constants.defaultTools);
 ```
 
 ## Error Handling
