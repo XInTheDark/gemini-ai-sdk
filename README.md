@@ -165,13 +165,14 @@ uploadImageAndAsk();
 
   - `message`: The prompt string or an array of `Part` objects (for multi-modal input).
   - `options`: Optional parameters.
+
     - `stream`: Whether to stream the response (default: `false`).
     - `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
     - `safetySettings`: Safety settings to filter responses.
     - `systemInstruction`: System instructions to guide the model's behavior.
     - `history`: An array of previous chat turns.
 
-  - Returns a `Promise` that resolves to a `GenerateContentResult` object (if not streaming), 
+  - Returns a `Promise` that resolves to a `GenerateContentResult` object (if not streaming),
     or a `GenerateContentStreamResult` object (if streaming).
 
 ### `Chat` Class

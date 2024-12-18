@@ -366,8 +366,7 @@ export class Gemini {
 
     if (options.stream) {
       return chat.sendMessageStream(parts);
-    }
-    else {
+    } else {
       return chat.sendMessage(parts);
     }
   }
