@@ -1,6 +1,6 @@
 {
   "name": "gemini-ai-sdk",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.6",
   "author": "jmuzhen",
   "description": "The simpler JavaScript Gemini SDK - optimised for raycast-g4f",
   "license": "GPL-3.0",

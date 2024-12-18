@@ -372,8 +372,8 @@ export class Gemini {
       safetySettings,
       systemInstruction,
     });
-    const result = await chat.sendMessage(parts);
 
+    const result = await chat.sendMessage(parts);
     return result;
   }
 
@@ -400,7 +400,6 @@ export class Gemini {
     });
 
     const result = await chat.sendMessageStream(parts);
-
     return result;
   }
 

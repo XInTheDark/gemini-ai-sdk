@@ -214,7 +214,7 @@ uploadImageAndAsk();
 - `safetyDisabledSettings`: The most permissive safety settings.
 
 Example:
-    
+
 ```typescript
 import { safetyDisabledSettings } from "gemini-ai-sdk";
 ```
