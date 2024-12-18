@@ -88,9 +88,9 @@ const formatMap: { [key: string]: string } = {
  * @returns The detected file type.
  */
 export const getFileType = async (
-    buffer: Uint8Array | ArrayBuffer,
-    filePath: string | undefined = undefined,
-    { strict = false } = {},
+  buffer: Uint8Array | ArrayBuffer,
+  filePath: string | undefined = undefined,
+  { strict = false } = {},
 ): Promise<string> => {
   const fileType: FileTypeResult | undefined = await fileTypeFromBuffer(buffer);
 
@@ -106,7 +106,7 @@ export const getFileType = async (
   if (!valid) {
     if (strict) {
       throw new Error(
-          "Please provide a valid file format that is accepted by Gemini. Learn more about valid formats here: https://ai.google.dev/gemini-api/docs/prompting_with_media?lang=node#supported_file_formats",
+        "Please provide a valid file format that is accepted by Gemini. Learn more about valid formats here: https://ai.google.dev/gemini-api/docs/prompting_with_media?lang=node#supported_file_formats",
       );
     } else {
       format = "text/plain";
@@ -128,6 +128,8 @@ export interface GeminiOptions {
  * Options for the `ask` and `askStream` methods.
  */
 export interface AskOptions {
+  model?: string;
+  history?: Content[];
   generationConfig?: GenerationConfig;
   safetySettings?: SafetySetting[];
   systemInstruction?: Content;
@@ -166,10 +168,7 @@ export class Chat {
    * @param options - Optional parameters for the request.
    * @returns The response from Gemini.
    */
-  public async ask(
-      message: string | Part[],
-      options: Partial<AskOptions> = {},
-  ): Promise<GenerateContentResult> {
+  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
     const mergedOptions = { ...this.options, ...options };
     return this.gemini.ask(message, {
       history: this.history,
@@ -184,8 +183,8 @@ export class Chat {
    * @returns A stream of responses from Gemini.
    */
   public async askStream(
-      message: string | Part[],
-      options: Partial<AskOptions> = {},
+    message: string | Part[],
+    options: Partial<AskOptions> = {},
   ): Promise<GenerateContentStreamResult> {
     const mergedOptions = { ...this.options, ...options };
     return this.gemini.askStream(message, {
@@ -208,10 +207,7 @@ export class Gemini {
    * @param options - Optional parameters for initializing the instance.
    */
   constructor(apiKey: string, options: Partial<GeminiOptions> = {}) {
-    this.genAI = new GoogleGenerativeAI(apiKey, {
-      apiVersion: options.apiVersion,
-      fetch: options.fetch,
-    });
+    this.genAI = new GoogleGenerativeAI(apiKey);
     this.options = {
       apiVersion: "v1beta",
       ...options,
@@ -223,13 +219,7 @@ export class Gemini {
    * @param options - Options for the file upload.
    * @returns The URI of the uploaded file.
    */
-  private async uploadFile({
-                             file,
-                             mimeType,
-                           }: {
-    file: Uint8Array | ArrayBuffer;
-    mimeType: string;
-  }): Promise<string> {
+  private async uploadFile({ file, mimeType }: { file: Uint8Array | ArrayBuffer; mimeType: string }): Promise<string> {
     const gemini = this.genAI;
 
     function generateBoundary(): string {
@@ -245,26 +235,26 @@ export class Gemini {
     const apiKey = gemini.apiKey;
 
     const generateBlob = (boundary: string, file: Uint8Array | ArrayBuffer, mime: string): Blob =>
-        new Blob([
-          `--${boundary}\r\nContent-Type: application/json; charset=utf-8\r\n\r\n${JSON.stringify({
-            file: {
-              mimeType: mime,
-            },
-          })}\r\n--${boundary}\r\nContent-Type: ${mime}\r\n\r\n`,
-          file,
-          `\r\n--${boundary}--`,
-        ]);
+      new Blob([
+        `--${boundary}\r\nContent-Type: application/json; charset=utf-8\r\n\r\n${JSON.stringify({
+          file: {
+            mimeType: mime,
+          },
+        })}\r\n--${boundary}\r\nContent-Type: ${mime}\r\n\r\n`,
+        file,
+        `\r\n--${boundary}--`,
+      ]);
 
     const fileSendDataRaw = await fetch(
-        `https://generativelanguage.googleapis.com/upload/${apiVersion}/files?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": `multipart/related; boundary=${boundary}`,
-            "X-Goog-Upload-Protocol": "multipart",
-          },
-          body: generateBlob(boundary, file, mimeType),
+      `https://generativelanguage.googleapis.com/upload/${apiVersion}/files?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": `multipart/related; boundary=${boundary}`,
+          "X-Goog-Upload-Protocol": "multipart",
         },
+        body: generateBlob(boundary, file, mimeType),
+      },
     ).then((res: Response) => res.json());
 
     const fileSendData = fileSendDataRaw.file;
@@ -302,9 +292,7 @@ export class Gemini {
    * @param messages - The messages or files to convert.
    * @returns An array of Gemini API parts.
    */
-  private async messageToParts(
-      messages: (string | Uint8Array | ArrayBuffer | FileUpload)[],
-  ): Promise<Part[]> {
+  private async messageToParts(messages: (string | Uint8Array | ArrayBuffer | FileUpload)[]): Promise<Part[]> {
     const parts: Part[] = [];
     let totalBytes = 0;
 
@@ -372,11 +360,8 @@ export class Gemini {
    * @param options - Optional parameters for the request.
    * @returns The response from the Gemini API.
    */
-  public async ask(
-      message: string | Part[],
-      options: Partial<AskOptions> & { history?: Content[] } = {},
-  ): Promise<GenerateContentResult> {
-    const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+  public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateContentResult> {
+    const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
     const parts = typeof message === "string" ? [{ text: message }] : message;
 
     const { generationConfig, safetySettings, systemInstruction, history } = options;
@@ -399,10 +384,10 @@ export class Gemini {
    * @returns A stream of responses from the Gemini API.
    */
   public async askStream(
-      message: string | Part[],
-      options: Partial<AskOptions> & { history?: Content[] } = {},
+    message: string | Part[],
+    options: Partial<AskOptions> = {},
   ): Promise<GenerateContentStreamResult> {
-    const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+    const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
     const parts = typeof message === "string" ? [{ text: message }] : message;
 
     const { generationConfig, safetySettings, systemInstruction, history } = options;

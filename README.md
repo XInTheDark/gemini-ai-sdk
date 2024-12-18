@@ -1,16 +1,17 @@
 # Gemini AI SDK
+
 ### The better Google Gemini TypeScript SDK Wrapper
 
 This package provides a TypeScript wrapper around the official `@google/generative-ai` package, offering a similar structure and feature set to the `gemini-g4f` package, but with improved functionality and maintainability. It allows you to easily integrate Google's Gemini AI models into your TypeScript projects, leveraging features like text generation, streaming responses, and chat interactions.
 
 ## Features
 
--   **Simplified API:** Provides an intuitive API similar to the official `@google/generative-ai` package.
--   **Chat Functionality:** Easily create and manage chat sessions with the Gemini models.
--   **Streaming Support:** Get real-time text generation results through streaming responses.
--   **File Uploads:** Upload files (images, videos, audio, text documents, etc.) and use them in your prompts for multi-modal interactions.
--   **Type Safety:** Built with TypeScript, ensuring type safety and better developer experience.
--   **Error Handling:** Robust error handling for various scenarios.
+- **Simplified API:** Provides an intuitive API similar to the official `@google/generative-ai` package.
+- **Chat Functionality:** Easily create and manage chat sessions with the Gemini models.
+- **Streaming Support:** Get real-time text generation results through streaming responses.
+- **File Uploads:** Upload files (images, videos, audio, text documents, etc.) and use them in your prompts for multi-modal interactions.
+- **Type Safety:** Built with TypeScript, ensuring type safety and better developer experience.
+- **Error Handling:** Robust error handling for various scenarios.
 
 ## Installation
 
@@ -73,11 +74,7 @@ streamText();
 ### Chat Interaction
 
 ```typescript
-import Gemini, {
-  Content,
-  HarmBlockThreshold,
-  HarmCategory,
-} from "your-package-name";
+import Gemini, { Content, HarmBlockThreshold, HarmCategory } from "your-package-name";
 
 const gemini = new Gemini("YOUR_API_KEY");
 
@@ -152,10 +149,7 @@ async function uploadImageAndAsk() {
   };
 
   // Send the file directly without providing the filePath in the object
-  const result = await gemini.ask([
-    { text: "Describe this image" },
-    fileUpload,
-  ]);
+  const result = await gemini.ask([{ text: "Describe this image" }, fileUpload]);
   console.log(result.response.text());
 }
 
@@ -166,63 +160,70 @@ uploadImageAndAsk();
 
 ### `Gemini` Class
 
--   **`constructor(apiKey: string, options?: Partial<GeminiOptions>)`**
-    -   `apiKey`: Your Gemini API key.
-    -   `options`: Optional configuration options.
-        -   `apiVersion`: The API version to use (default: `"v1beta"`).
-        -   `fetch`: A custom fetch implementation (optional).
+- **`constructor(apiKey: string, options?: Partial<GeminiOptions>)`**
 
--   **`ask(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentResult>`**
-    -   `message`: The prompt string or an array of `Part` objects (for multi-modal input).
-    -   `options`: Optional parameters.
-        -   `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
-        -   `safetySettings`: Safety settings to filter responses.
-        -   `systemInstruction`: System instructions to guide the model's behavior.
-        -   `history`: An array of previous chat turns.
+  - `apiKey`: Your Gemini API key.
+  - `options`: Optional configuration options.
+    - `apiVersion`: The API version to use (default: `"v1beta"`).
+    - `fetch`: A custom fetch implementation (optional).
 
-    -   Returns a `Promise` that resolves to a `GenerateContentResult` object.
+- **`ask(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentResult>`**
 
--   **`askStream(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentStreamResult>`**
-    -   `message`: The prompt string or an array of `Part` objects.
-    -   `options`: Same as `ask` method.
-    -   Returns a `Promise` that resolves to a `GenerateContentStreamResult` object, which contains an async generator (`stream`) for iterating over the chunks and a `response` promise for getting the aggregated response when the stream is done.
+  - `message`: The prompt string or an array of `Part` objects (for multi-modal input).
+  - `options`: Optional parameters.
 
--   **`createChat(options?: Partial<AskOptions>): Chat`**
-    -   `options`: Optional parameters for the chat (history, safety settings, etc.).
-    -   Returns a `Chat` object.
+    - `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
+    - `safetySettings`: Safety settings to filter responses.
+    - `systemInstruction`: System instructions to guide the model's behavior.
+    - `history`: An array of previous chat turns.
+
+  - Returns a `Promise` that resolves to a `GenerateContentResult` object.
+
+- **`askStream(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentStreamResult>`**
+
+  - `message`: The prompt string or an array of `Part` objects.
+  - `options`: Same as `ask` method.
+  - Returns a `Promise` that resolves to a `GenerateContentStreamResult` object, which contains an async generator (`stream`) for iterating over the chunks and a `response` promise for getting the aggregated response when the stream is done.
+
+- **`createChat(options?: Partial<AskOptions>): Chat`**
+  - `options`: Optional parameters for the chat (history, safety settings, etc.).
+  - Returns a `Chat` object.
 
 ### `Chat` Class
 
--   **`constructor(gemini: Gemini, options?: Partial<AskOptions>)`**
-    -   `gemini`: The `Gemini` instance to use.
-    -   `options`: Optional parameters for the chat.
+- **`constructor(gemini: Gemini, options?: Partial<AskOptions>)`**
 
--   **`appendMessage(message: Content)`**
-    -   `message`: The `Content` object representing the message to append to the history.
+  - `gemini`: The `Gemini` instance to use.
+  - `options`: Optional parameters for the chat.
 
--   **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
-    -   Same as the `Gemini.ask` method, but uses the chat's history.
+- **`appendMessage(message: Content)`**
 
--   **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
-    -   Same as the `Gemini.askStream` method, but uses the chat's history.
+  - `message`: The `Content` object representing the message to append to the history.
+
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
+
+  - Same as the `Gemini.ask` method, but uses the chat's history.
+
+- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
+  - Same as the `Gemini.askStream` method, but uses the chat's history.
 
 ### Types
 
--   **`FileUpload`:** `{ buffer: ArrayBuffer, filePath: string }`
--   **`GeminiOptions`:** `{ apiVersion?: string, fetch?: typeof fetch }`
--   **`AskOptions`:** `{ generationConfig?: GenerationConfig, safetySettings?: SafetySetting[], systemInstruction?: Content }`
--   **`Content`:**  `{ role: string, parts: Part[] }`
--   **`Part`:**  `TextPart | InlineDataPart | FileDataPart`
+- **`FileUpload`:** `{ buffer: ArrayBuffer, filePath: string }`
+- **`GeminiOptions`:** `{ apiVersion?: string, fetch?: typeof fetch }`
+- **`AskOptions`:** `{ generationConfig?: GenerationConfig, safetySettings?: SafetySetting[], systemInstruction?: Content }`
+- **`Content`:** `{ role: string, parts: Part[] }`
+- **`Part`:** `TextPart | InlineDataPart | FileDataPart`
 
 ## Error Handling
 
 The package handles errors gracefully and throws appropriate exceptions when necessary. These include errors related to:
 
--   Invalid API key
--   Network issues
--   API errors (e.g., exceeding rate limits)
--   File upload errors
--   Safety violations (if configured)
+- Invalid API key
+- Network issues
+- API errors (e.g., exceeding rate limits)
+- File upload errors
+- Safety violations (if configured)
 
 ## Contributing
 
