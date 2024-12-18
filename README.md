@@ -16,6 +16,7 @@ This package provides a TypeScript wrapper around the official `@google/generati
 - **File Uploads:** The package takes care of uploading files (images, videos, audio, text documents, etc.) for you! Simply provide a file buffer, and we will handle the rest.
 - **Type Safety:** Built with TypeScript, ensuring type safety and better developer experience.
 - **Error Handling:** Robust error handling for various scenarios.
+- **Tool Support:** Easily configure tools that the model can use, such as web search and code execution.
 
 ## Installation
 
