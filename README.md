@@ -167,7 +167,7 @@ uploadImageAndAsk();
     - `apiVersion`: The API version to use (default: `"v1beta"`).
     - `fetch`: A custom fetch implementation (optional).
 
-- **`ask(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentResult>`**
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
 
   - `message`: The prompt string or an array of `Part` objects (for multi-modal input).
   - `options`: Optional parameters.
@@ -179,7 +179,7 @@ uploadImageAndAsk();
 
   - Returns a `Promise` that resolves to a `GenerateContentResult` object.
 
-- **`askStream(message: string | Part[], options?: Partial<AskOptions> & { history?: Content[] }): Promise<GenerateContentStreamResult>`**
+- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
 
   - `message`: The prompt string or an array of `Part` objects.
   - `options`: Same as `ask` method.
