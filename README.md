@@ -74,7 +74,7 @@ streamText();
 ### Chat Interaction
 
 ```typescript
-import Gemini, { Content, HarmBlockThreshold, HarmCategory } from "gemini-ai-sdk";
+import Gemini from "gemini-ai-sdk";
 
 const gemini = new Gemini("YOUR_API_KEY");
 
@@ -88,12 +88,6 @@ async function runChat() {
       {
         role: "model",
         parts: [{ text: "I am doing well, thank you. How can I help you today?" }],
-      },
-    ],
-    safetySettings: [
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
       },
     ],
   });
