@@ -1,8 +1,8 @@
 {
   "name": "gemini-ai-sdk",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0",
   "author": "jmuzhen",
-  "description": "The simpler JavaScript Gemini SDK - optimised for raycast-g4f",
+  "description": "The simpler Google Gemini SDK",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
@@ -35,6 +35,6 @@
   "main": "dist/index.mjs",
   "typings": "dist/index.d.mts",
   "bugs": {
-    "url": "https://github.com/jmuzhen/gemini-ai-v2/issues"
+    "url": "https://github.com/jmuzhen/gemini-ai-sdk/issues"
   }
 }

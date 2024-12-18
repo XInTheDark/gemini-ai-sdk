@@ -1,15 +1,19 @@
 # Gemini AI SDK
 
-### The better Google Gemini TypeScript SDK Wrapper
+### The simpler Google Gemini SDK for TypeScript
 
-This package provides a TypeScript wrapper around the official `@google/generative-ai` package, offering a similar structure and feature set to the `gemini-g4f` package, but with improved functionality and maintainability. It allows you to easily integrate Google's Gemini AI models into your TypeScript projects, leveraging features like text generation, streaming responses, and chat interactions.
+![NPM Version](https://img.shields.io/npm/v/gemini-ai-sdk.svg?label=NPM&logo=npm&style=for-the-badge&color=0470FF&logoColor=white)
+![NPM Download Count](https://img.shields.io/npm/dt/gemini-ai-sdk?label=Downloads&style=for-the-badge&color=27B2FF)
+![Size](https://img.shields.io/bundlephobia/minzip/gemini-ai-sdk?style=for-the-badge&color=B3CAFF)
+
+This package provides a TypeScript wrapper around the official `@google/generative-ai` package, offering a similar structure and feature set to the `gemini-ai` package, but with improved functionality and maintainability. It allows you to easily integrate Google's Gemini AI models into your TypeScript projects, leveraging features like text generation, streaming responses, and chat interactions.
 
 ## Features
 
-- **Simplified API:** Provides an intuitive API similar to the official `@google/generative-ai` package.
+- **Simplified API:** Provides a simple yet powerful API for interacting with the Gemini AI models.
 - **Chat Functionality:** Easily create and manage chat sessions with the Gemini models.
 - **Streaming Support:** Get real-time text generation results through streaming responses.
-- **File Uploads:** Upload files (images, videos, audio, text documents, etc.) and use them in your prompts for multi-modal interactions.
+- **File Uploads:** The package takes care of uploading files (images, videos, audio, text documents, etc.) for you! Simply provide a file buffer, and we will handle the rest.
 - **Type Safety:** Built with TypeScript, ensuring type safety and better developer experience.
 - **Error Handling:** Robust error handling for various scenarios.
 
@@ -24,7 +28,7 @@ npm install gemini-ai-sdk
 ### Initialization
 
 ```typescript
-import Gemini, { GeminiOptions, FileUpload } from "gemini-ai-sdk";
+import Gemini, { GeminiOptions } from "gemini-ai-sdk";
 
 // Initialize Gemini with your API key
 const gemini = new Gemini("YOUR_API_KEY");
@@ -54,7 +58,7 @@ async function generateText() {
 generateText();
 ```
 
-### Streaming Text Generation (askStream)
+### Streaming Text Generation
 
 ```typescript
 import Gemini from "gemini-ai-sdk";
@@ -62,7 +66,7 @@ import Gemini from "gemini-ai-sdk";
 const gemini = new Gemini("YOUR_API_KEY");
 
 async function streamText() {
-  const result = await gemini.askStream("Tell me a joke.");
+  const result = await gemini.ask("Tell me a joke.", { stream: true });
   for await (const chunk of result.stream) {
     console.log(chunk.text());
   }
@@ -105,7 +109,7 @@ async function runChat() {
   });
 
   // Get a streaming response from a user message
-  const result2 = await chat.askStream("Tell me a story about a dog.");
+  const result2 = await chat.ask("Tell me a story about a dog.", { stream: true });
   console.log("Model (streaming):");
   for await (const chunk of result2.stream) {
     process.stdout.write(chunk.text());
@@ -129,7 +133,7 @@ runChat();
 ### File Uploads
 
 ```typescript
-import Gemini, { isFileUpload } from "gemini-ai-sdk";
+import Gemini from "gemini-ai-sdk";
 import * as fs from "fs";
 
 const gemini = new Gemini("YOUR_API_KEY");
@@ -161,27 +165,19 @@ uploadImageAndAsk();
     - `apiVersion`: The API version to use (default: `"v1beta"`).
     - `fetch`: A custom fetch implementation (optional).
 
-- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateResult>`**
 
   - `message`: The prompt string or an array of `Part` objects (for multi-modal input).
   - `options`: Optional parameters.
 
+    - `stream`: Whether to stream the response (default: `false`).
     - `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
     - `safetySettings`: Safety settings to filter responses.
     - `systemInstruction`: System instructions to guide the model's behavior.
     - `history`: An array of previous chat turns.
 
-  - Returns a `Promise` that resolves to a `GenerateContentResult` object.
-
-- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
-
-  - `message`: The prompt string or an array of `Part` objects.
-  - `options`: Same as `ask` method.
-  - Returns a `Promise` that resolves to a `GenerateContentStreamResult` object, which contains an async generator (`stream`) for iterating over the chunks and a `response` promise for getting the aggregated response when the stream is done.
-
-- **`createChat(options?: Partial<AskOptions>): Chat`**
-  - `options`: Optional parameters for the chat (history, safety settings, etc.).
-  - Returns a `Chat` object.
+  - Returns a `Promise` that resolves to a `GenerateContentResult` object (if not streaming),
+    or a `GenerateContentStreamResult` object (if streaming).
 
 ### `Chat` Class
 
@@ -194,12 +190,9 @@ uploadImageAndAsk();
 
   - `message`: The `Content` object representing the message to append to the history.
 
-- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentResult>`**
+- **`ask(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateResult>`**
 
   - Same as the `Gemini.ask` method, but uses the chat's history.
-
-- **`askStream(message: string | Part[], options?: Partial<AskOptions>): Promise<GenerateContentStreamResult>`**
-  - Same as the `Gemini.askStream` method, but uses the chat's history.
 
 ### Types
 
@@ -208,6 +201,7 @@ uploadImageAndAsk();
 - **`AskOptions`:** `{ generationConfig?: GenerationConfig, safetySettings?: SafetySetting[], systemInstruction?: Content }`
 - **`Content`:** `{ role: string, parts: Part[] }`
 - **`Part`:** `TextPart | InlineDataPart | FileDataPart`
+- Heavily based on types from the `@google/generative-ai` package
 
 ### Constants
 
@@ -228,6 +222,20 @@ The package handles errors gracefully and throws appropriate exceptions when nec
 - API errors (e.g., exceeding rate limits)
 - File upload errors
 - Safety violations (if configured)
+
+## Support
+
+The official `@google/generative-ai` package, which this SDK is based on, officially supports Node.js 18.x and above.
+However, the package requires the Fetch API to be available, so it may not work in some environments. If you encounter
+issues, please try using the polyfill `undici`. Example:
+
+```typescript
+import { fetch, Headers, Response, Request } from "undici";
+global.fetch = fetch;
+global.Headers = Headers;
+global.Response = Response;
+global.Request = Request;
+```
 
 ## Contributing
 
