@@ -171,10 +171,11 @@ uploadImageAndAsk();
   - `options`: Optional parameters.
 
     - `stream`: Whether to stream the response (default: `false`).
+    - `history`: An array of previous chat turns.
     - `generationConfig`: Configuration for text generation (temperature, `maxOutputTokens`, etc.).
     - `safetySettings`: Safety settings to filter responses.
     - `systemInstruction`: System instructions to guide the model's behavior.
-    - `history`: An array of previous chat turns.
+    - `tools`: Tools that the model can call. The format is as per the Gemini API documentation.
 
   - Returns a `Promise` that resolves to a `GenerateContentResult` object (if not streaming),
     or a `GenerateContentStreamResult` object (if streaming).
@@ -243,4 +244,4 @@ Contributions are welcome! Please feel free to open issues or pull requests on t
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GPLv3 License - see the LICENSE file for details.

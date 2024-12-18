@@ -10,6 +10,7 @@ import {
   Content,
   FileDataPart,
   InlineDataPart,
+  Tool,
 } from "@google/generative-ai";
 
 import { FileTypeResult, fileTypeFromBuffer } from "file-type";
@@ -134,6 +135,7 @@ export interface AskOptions {
   generationConfig?: GenerationConfig;
   safetySettings?: SafetySetting[];
   systemInstruction?: Content;
+  tools?: Tool[];
 }
 
 /**
@@ -352,7 +354,10 @@ export class Gemini {
    * Otherwise, returns an AsyncGenerator of results.
    */
   public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateResult> {
-    const model = this.genAI.getGenerativeModel({ model: options.model }, { apiVersion: this.options.apiVersion });
+    const model = this.genAI.getGenerativeModel(
+      { model: options.model, tools: options.tools },
+      { apiVersion: this.options.apiVersion },
+    );
     const parts = typeof message === "string" ? [{ text: message }] : message;
 
     const { generationConfig, safetySettings, systemInstruction, history } = options;
