@@ -1,15 +1,19 @@
 # Gemini AI SDK
 
-### The better Google Gemini TypeScript SDK Wrapper
+### The simpler Google Gemini SDK for TypeScript
 
-This package provides a TypeScript wrapper around the official `@google/generative-ai` package, offering a similar structure and feature set to the `gemini-g4f` package, but with improved functionality and maintainability. It allows you to easily integrate Google's Gemini AI models into your TypeScript projects, leveraging features like text generation, streaming responses, and chat interactions.
+![NPM Version](https://img.shields.io/npm/v/gemini-ai-sdk.svg?label=NPM&logo=npm&style=for-the-badge&color=0470FF&logoColor=white)
+![NPM Download Count](https://img.shields.io/npm/dt/gemini-ai-sdk?label=Downloads&style=for-the-badge&color=27B2FF)
+![Size](https://img.shields.io/bundlephobia/minzip/gemini-ai-sdk?style=for-the-badge&color=B3CAFF)
+
+This package provides a TypeScript wrapper around the official `@google/generative-ai` package, offering a similar structure and feature set to the `gemini-ai` package, but with improved functionality and maintainability. It allows you to easily integrate Google's Gemini AI models into your TypeScript projects, leveraging features like text generation, streaming responses, and chat interactions.
 
 ## Features
 
-- **Simplified API:** Provides an intuitive API similar to the official `@google/generative-ai` package.
+- **Simplified API:** Provides a simple yet powerful API for interacting with the Gemini AI models.
 - **Chat Functionality:** Easily create and manage chat sessions with the Gemini models.
 - **Streaming Support:** Get real-time text generation results through streaming responses.
-- **File Uploads:** Upload files (images, videos, audio, text documents, etc.) and use them in your prompts for multi-modal interactions.
+- **File Uploads:** The package takes care of uploading files (images, videos, audio, text documents, etc.) for you! Simply provide a file buffer, and we will handle the rest.
 - **Type Safety:** Built with TypeScript, ensuring type safety and better developer experience.
 - **Error Handling:** Robust error handling for various scenarios.
 
@@ -24,7 +28,7 @@ npm install gemini-ai-sdk
 ### Initialization
 
 ```typescript
-import Gemini, { GeminiOptions, FileUpload } from "gemini-ai-sdk";
+import Gemini, { GeminiOptions } from "gemini-ai-sdk";
 
 // Initialize Gemini with your API key
 const gemini = new Gemini("YOUR_API_KEY");
@@ -129,7 +133,7 @@ runChat();
 ### File Uploads
 
 ```typescript
-import Gemini, { isFileUpload } from "gemini-ai-sdk";
+import Gemini from "gemini-ai-sdk";
 import * as fs from "fs";
 
 const gemini = new Gemini("YOUR_API_KEY");
@@ -197,6 +201,7 @@ uploadImageAndAsk();
 - **`AskOptions`:** `{ generationConfig?: GenerationConfig, safetySettings?: SafetySetting[], systemInstruction?: Content }`
 - **`Content`:** `{ role: string, parts: Part[] }`
 - **`Part`:** `TextPart | InlineDataPart | FileDataPart`
+- Heavily based on types from the `@google/generative-ai` package
 
 ### Constants
 
