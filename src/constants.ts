@@ -1,4 +1,4 @@
-import { HarmCategory, HarmBlockThreshold, DynamicRetrievalMode } from "@google/generative-ai";
+import { HarmCategory, HarmBlockThreshold, DynamicRetrievalConfigMode } from "@google/genai";
 
 export const safetyDisabledSettings = [
   { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -11,7 +11,7 @@ export const defaultTools = {
   webSearch: {
     googleSearchRetrieval: {
       dynamicRetrievalConfig: {
-        mode: DynamicRetrievalMode.MODE_DYNAMIC,
+        mode: DynamicRetrievalConfigMode.MODE_DYNAMIC,
         dynamicThreshold: 0.7,
       },
     },

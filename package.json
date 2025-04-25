@@ -28,7 +28,7 @@
     "vitest": "^1.0.4"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
+    "@google/genai": "^0.10.0",
     "file-type": "^19.0.0",
     "mime-lite": "^1.0.3"
   },
