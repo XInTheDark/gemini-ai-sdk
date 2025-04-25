@@ -1,17 +1,12 @@
 import {
-  GenerateContentResult,
-  GenerateContentStreamResult,
-  GenerationConfig,
-  GoogleGenerativeAI,
-  HarmBlockThreshold,
-  HarmCategory,
   Part,
   SafetySetting,
   Content,
-  FileDataPart,
-  InlineDataPart,
   Tool,
-} from "@google/generative-ai";
+  GoogleGenAI,
+  GenerateContentResponse,
+  GenerateContentConfig,
+} from "@google/genai";
 
 import { FileTypeResult, fileTypeFromBuffer } from "file-type";
 import mime from "mime-lite";
@@ -132,7 +127,7 @@ export interface AskOptions {
   stream?: boolean;
   model?: string;
   history?: Content[];
-  generationConfig?: GenerationConfig;
+  generationConfig?: GenerateContentConfig;
   safetySettings?: SafetySetting[];
   systemInstruction?: Content;
   tools?: Tool[];
@@ -141,7 +136,7 @@ export interface AskOptions {
 /**
  * Types for various methods.
  */
-export type GenerateResult = GenerateContentResult | GenerateContentStreamResult;
+export type GenerateResult = GenerateContentResponse | AsyncGenerator<GenerateContentResponse>;
 
 /**
  * Represents a chat session with Gemini.
@@ -190,7 +185,8 @@ export class Chat {
  * Main class for interacting with the Gemini API.
  */
 export class Gemini {
-  private genAI: GoogleGenerativeAI;
+  private genAI: GoogleGenAI;
+  private apiKey: string;
   private options: GeminiOptions;
 
   /**
@@ -199,7 +195,8 @@ export class Gemini {
    * @param options - Optional parameters for initializing the instance.
    */
   constructor(apiKey: string, options: Partial<GeminiOptions> = {}) {
-    this.genAI = new GoogleGenerativeAI(apiKey);
+    this.genAI = new GoogleGenAI({ apiKey, apiVersion: "v1beta" });
+    this.apiKey = apiKey;
     this.options = {
       apiVersion: "v1beta",
       ...options,
@@ -224,7 +221,6 @@ export class Gemini {
 
     const boundary = generateBoundary();
     const apiVersion = this.options.apiVersion;
-    const apiKey = gemini.apiKey;
 
     const generateBlob = (boundary: string, file: Uint8Array | ArrayBuffer, mime: string): Blob =>
       new Blob([
@@ -238,7 +234,7 @@ export class Gemini {
       ]);
 
     const fileSendDataRaw = await fetch(
-      `https://generativelanguage.googleapis.com/upload/${apiVersion}/files?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/upload/${apiVersion}/files?key=${this.apiKey}`,
       {
         method: "POST",
         headers: {
@@ -257,7 +253,7 @@ export class Gemini {
     // Keep polling until the file state is "ACTIVE"
     while (true) {
       try {
-        const url = `https://generativelanguage.googleapis.com/${apiVersion}/${fileSendData.name}?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/${apiVersion}/${fileSendData.name}?key=${this.apiKey}`;
 
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
@@ -300,7 +296,7 @@ export class Gemini {
         const mimeType = await getFileType(buffer, filePath);
 
         if (!mimeType.startsWith("video")) {
-          const part: InlineDataPart = {
+          const part: Part = {
             inlineData: {
               mimeType: mimeType,
               data: Buffer.from(buffer).toString("base64"),
@@ -313,7 +309,7 @@ export class Gemini {
             mimeType: mimeType,
           });
 
-          const part: FileDataPart = {
+          const part: Part = {
             fileData: {
               mimeType: mimeType,
               fileUri: fileURI,
@@ -332,7 +328,7 @@ export class Gemini {
             file: Buffer.from(part.inlineData.data, "base64"),
             mimeType: part.inlineData.mimeType,
           });
-          const newPart: FileDataPart = {
+          const newPart: Part = {
             fileData: {
               mimeType: part.inlineData.mimeType,
               fileUri: fileURI,
@@ -354,25 +350,26 @@ export class Gemini {
    * Otherwise, returns an AsyncGenerator of results.
    */
   public async ask(message: string | Part[], options: Partial<AskOptions> = {}): Promise<GenerateResult> {
-    const model = this.genAI.getGenerativeModel(
-      { model: options.model, tools: options.tools },
-      { apiVersion: this.options.apiVersion },
+    const { generationConfig, safetySettings, systemInstruction, history } = options;
+
+    const chat = this.genAI.chats.create(
+      {
+        model: options.model,
+        history: history || [],
+        config: {
+          ...generationConfig,
+          tools: options.tools,
+          safetySettings,
+          systemInstruction,
+        }
+      }
     );
     const parts = typeof message === "string" ? [{ text: message }] : message;
 
-    const { generationConfig, safetySettings, systemInstruction, history } = options;
-
-    const chat = model.startChat({
-      history: history || [],
-      generationConfig,
-      safetySettings,
-      systemInstruction,
-    });
-
     if (options.stream) {
-      return chat.sendMessageStream(parts);
+      return chat.sendMessageStream({ message: parts });
     } else {
-      return chat.sendMessage(parts);
+      return chat.sendMessage({ message: parts });
     }
   }
 
