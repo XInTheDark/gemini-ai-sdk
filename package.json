@@ -1,6 +1,6 @@
 {
   "name": "gemini-ai-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "jmuzhen",
   "description": "The simpler Google Gemini SDK",
   "license": "GPL-3.0",
@@ -28,7 +28,7 @@
     "vitest": "^1.0.4"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
+    "@google/generative-ai": "^0.24.1",
     "file-type": "^19.0.0",
     "mime-lite": "^1.0.3"
   },
